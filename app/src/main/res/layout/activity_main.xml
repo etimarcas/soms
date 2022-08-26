@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,19 +8,71 @@
     android:orientation="vertical"
     android:gravity="center">
 
+    <LinearLayout
+    android:id="@+id/ly1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+
+
 
     <TextView
-        android:id="@+id/textrfid"
-        android:layout_width="match_parent"
+        android:id="@+id/lbl_Estado"
         android:layout_height="wrap_content"
-        android:text=""
+        android:layout_width="match_parent"
+        android:text="Estado del RFID"
+        android:textSize="15dp"
         />
 
     <Button
-        android:id="@+id/test1"
+        android:id="@+id/procesar"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:text="test"
+        android:text="procesar"
         />
 
+    <Button
+        android:id="@+id/reconectar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="reconectar"
+        />
+
+    <Button
+        android:id="@+id/stop"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:text="stop"
+        />
+
+    <ListView
+        android:id="@+id/lv_encontrados"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        />
+
+
+
+
 </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"/>
+
+    </LinearLayout>
+
+
+
+</RelativeLayout>

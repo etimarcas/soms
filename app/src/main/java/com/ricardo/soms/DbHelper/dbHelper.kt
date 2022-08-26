@@ -82,4 +82,12 @@ class dbHelper (context: Context): SQLiteOpenHelper(context,DATABASE_NAME,null,D
         return db.insert("productos",null,values)
     }
 
+    fun deleteAllFiles(){
+        val db = this.writableDatabase
+        db.delete("usuarios",null,null)
+        db.delete("bodegas",null,null)
+        db.delete("productos",null,null)
+        db.close()
+    }
+
 }

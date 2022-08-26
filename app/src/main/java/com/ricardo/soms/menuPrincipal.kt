@@ -20,6 +20,7 @@ import com.ricardo.soms.objetos.usuario
 import kotlinx.android.synthetic.main.activity_menu_principal.*
 import java.io.File
 import java.io.IOException
+import java.lang.Exception
 
 
 class menuPrincipal : AppCompatActivity() {
@@ -43,7 +44,7 @@ class menuPrincipal : AppCompatActivity() {
 
 
         BtnSinc.setOnClickListener{
-            leerFicheros()
+            syncFiles()
         }
 
 
@@ -68,13 +69,8 @@ class menuPrincipal : AppCompatActivity() {
         }
     }
 
-
     private fun crearCarpetas(){
 
-        //para salidas
-        //val ruta = "/sdcard/oms"
-        //val file = File(ruta,"nombre archivo")
-        //
         try{
 
             val f_oms = File(Environment.getExternalStorageDirectory().absolutePath+"/soms")
@@ -94,7 +90,7 @@ class menuPrincipal : AppCompatActivity() {
 
     }
 
-    private fun leerFicheros(){
+    private fun syncFiles(){
 
         val objdbhelper = dbHelper(this)
         val objUser = usuario()
@@ -111,6 +107,8 @@ class menuPrincipal : AppCompatActivity() {
         TbMensaje.visibility = View.VISIBLE
 
         try {
+
+            objdbhelper.deleteAllFiles()
 
             var lineas = File(ruta+fileUsuarios).bufferedReader().readLines()
             lineas.forEach {
@@ -140,12 +138,18 @@ class menuPrincipal : AppCompatActivity() {
                 objdbhelper.insertProducto(objprod)
             }
 
-        }catch (e:IOException){Toast.makeText(this,"Error [leerFichero] "+e.message,Toast.LENGTH_LONG).show() }
+            //si resulta bien se cambia el icono
+            BtnSinc.setImageResource(R.drawable.ic_baseline_check_circle_outline_24)
+
+        }catch (e:Exception){Toast.makeText(this,"Error [leerFichero] "+e.message,Toast.LENGTH_LONG).show() }
+        finally {
+            progressBar.visibility = View.GONE
+            TbMensaje.visibility = View.GONE
+        }
 
 
 
-        progressBar.visibility = View.GONE
-        TbMensaje.visibility = View.GONE
+
 
 
     }

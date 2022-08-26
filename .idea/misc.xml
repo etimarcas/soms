@@ -3,9 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/DESARROLLO/Documents/Android Studio Proyectos/soms/app/src/main/res/drawable/ic_baseline_local_offer_24.xml" value="0.2815" />
         <entry key="..\:/Users/DESARROLLO/Documents/Android Studio Proyectos/soms/app/src/main/res/layout/activity_inventario.xml" value="0.358695652173913" />
         <entry key="..\:/Users/DESARROLLO/Documents/Android Studio Proyectos/soms/app/src/main/res/layout/activity_login.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/DESARROLLO/Documents/Android Studio Proyectos/soms/app/src/main/res/layout/activity_main.xml" value="0.2861111111111111" />
         <entry key="..\:/Users/DESARROLLO/Documents/Android Studio Proyectos/soms/app/src/main/res/layout/activity_menu_principal.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/DESARROLLO/Documents/Android Studio Proyectos/soms/app/src/main/res/layout/list_tags_adapter.xml" value="0.18" />
       </map>
     </option>
   </component>
