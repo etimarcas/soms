@@ -93,6 +93,7 @@ companion object {
 
             }
             // Establece la conexion con el reader
+            //if(reader?.isConnected == true)
             reader?.connect()
 
 
@@ -236,8 +237,8 @@ companion object {
             // Sin estas lineas de codigo no es posible tomar el inventario
             try {
                 reader?.Config?.setUniqueTagReport(true)
+                //reader?.Config?.beeperVolume = BEEPER_VOLUME.MEDIUM_BEEP
                 reader?.Actions?.Inventory?.perform()
-
 
 
 
@@ -308,30 +309,15 @@ companion object {
 
 
 
-            //reader?.Actions?.TagLocationing?.Perform("E2002849491502421020B330",null,null)
 
-            //inventando
-           /* myTags2= reader?.Actions?.getReadTags(100) as Array<TagData>
-            if(myTags2 != null){
-                for(ind in myTags2.indices){
-                    if(myTags2[ind].isContainsLocationInfo){
-                        val tg = tags()
-                        tg.idTag = myTags2[ind].tagID
-                        tg.distanceTag = myTags2[ind].LocationInfo.relativeDistance
 
-                        listaTags.add(tg)
-                    }
-                }
-            }*/
-
-            //finInventado
             var tg = tags()
 
             if (myTags != null) {
                 for (index in myTags.indices) {
                     println("Tag ID " + myTags[index].tagID)
 
-                    val tagTem = myTags[index].tagID
+
                      tg.idTag = myTags[index].tagID
                     ///
 
@@ -339,8 +325,6 @@ companion object {
 
 
 
-                    //mHandler.removeCallbacks(hMyTimeTask)
-                    //mHandler.postDelayed(hMyTimeTask, 100) // delay 1 second
                     if (myTags[index].opCode == ACCESS_OPERATION_CODE.ACCESS_OPERATION_READ &&
                         myTags[index].opStatus == ACCESS_OPERATION_STATUS.ACCESS_SUCCESS) {
                         if (myTags[index].memoryBankData.length > 0) {
@@ -352,21 +336,18 @@ companion object {
 
 
 
-                    //reader?.Actions?.TagLocationing?.Perform(tg.idTag.toString(),null,null)
+
 
                    if (myTags[index].isContainsLocationInfo) {
-                        val dist = myTags[index].LocationInfo.relativeDistance
-                        ///
-                        tg.distanceTag = myTags[index].LocationInfo.relativeDistance.toString()
+                       var tag = index
+                        val dist = myTags[tag].LocationInfo.relativeDistance
+
+                        tg.distanceTag = myTags[tag].LocationInfo.relativeDistance.toString()
 
                         println("Tag relative distance $dist")
                     }
 
-                    /*if (!lsTags.contains(tagTem)) {
 
-                        lsTags.add(tagTem)
-                        listaTags.add(tg)
-                    }*/
 
                     if (!listaTags.contains(tg)) {
 
