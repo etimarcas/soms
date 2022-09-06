@@ -12,11 +12,8 @@
     android:id="@+id/ly1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-
-
-
+    android:orientation="vertical"
+    android:padding="10dp">
 
     <TextView
         android:id="@+id/lbl_Estado"
@@ -26,26 +23,41 @@
         android:textSize="15dp"
         />
 
-    <Button
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <Button
+            android:id="@+id/reconectar"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Capturar TAGS"
+            android:drawableLeft="@drawable/ic_baseline_play_circle_24"
+            />
+
+        <Button
+            android:id="@+id/stop"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Detener  Lectura"
+            android:visibility="gone"
+            />
+
+        <Button
         android:id="@+id/procesar"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:text="procesar"
+        android:text="Listar Tags"
+        android:drawableLeft="@drawable/ic_baseline_assignment_24"
         />
 
-    <Button
-        android:id="@+id/reconectar"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:text="reconectar"
-        />
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/stop"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        android:text="stop"
-        />
+
+
+
 
     <ListView
         android:id="@+id/lv_encontrados"

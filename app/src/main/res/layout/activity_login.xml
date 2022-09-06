@@ -6,9 +6,24 @@
     android:layout_height="match_parent"
     tools:context=".login"
     android:orientation="vertical"
-    android:gravity="center"
-    android:layout_margin="10dp">
+    android:gravity="center_horizontal">
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="LOGIN"
+        android:textAlignment="center"
+        android:textSize="20dp"
+        android:textColor="@color/white"
+        android:background="@drawable/labels"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="10dp">
 
     <TextView
         android:layout_height="wrap_content"
@@ -20,18 +35,38 @@
         android:background="@drawable/labels"
         android:layout_margin="5dp"
         />
+
     <EditText
-        android:id="@+id/loginUser"
+        android:id="@+id/TbloginUser"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
+        android:textSize="20dp"
+        android:maxLength="15"
+        android:singleLine="true"
         android:background="@drawable/edittext"
         />
 
     <Button
+        android:id="@+id/BtnLogin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="login"
+        android:text="Continuar"
+        android:layout_margin="10dp"
         />
+
+        <TextView
+            android:id="@+id/LblMsg"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="El Usuario no fue registrado en Sabueso, valide en la plataforma e intente nuevamente."
+            android:textAlignment="center"
+            android:textColor="@color/azul"
+            android:textSize="20dp"
+            android:layout_margin="5dp"
+            android:visibility="gone"
+            />
+
+    </LinearLayout>
 
 </LinearLayout>

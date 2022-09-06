@@ -64,8 +64,19 @@ companion object {
         }
 
         reconectar.setOnClickListener{
-            configurar()
+            if(reader?.isConnected == true){
+                stopInventory()
+                reconectar.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_baseline_play_circle_24,0,0,0)
+                reconectar.text = "Capturar TAGS"
+            }else{
+
+                configurar()
+                reconectar.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_baseline_stop_circle_24,0,0,0)
+                reconectar.text = "Detener"
+
+            }
         }
+
         stop.setOnClickListener {
             stopInventory()
         }
