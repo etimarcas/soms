@@ -7,8 +7,8 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.ricardo.soms.objetos.hextoascii
-import com.ricardo.soms.objetos.tags
+import com.ricardo.soms.DbHelper.dbHelper
+import com.ricardo.soms.objetos.*
 import com.zebra.rfid.api3.*
 import com.zebra.rfid.api3.Antennas.AntennaRfConfig
 import com.zebra.rfid.api3.Antennas.SingulationControl
@@ -36,6 +36,8 @@ companion object {
     lateinit var myTags2: Array<TagData>
 
     var adapter: TagsAdapter? = null
+
+    var usr = ""
 }
 
 
@@ -46,7 +48,11 @@ companion object {
         context=this
 
 
-        readers = Readers(this,ENUM_TRANSPORT.SERVICE_SERIAL)
+        val i = intent
+        usr = i.getStringExtra("usuario").toString()
+
+
+        readers = Readers(this,ENUM_TRANSPORT.ALL)
 
 
 
@@ -59,7 +65,7 @@ companion object {
         //configurar()
 
 
-        procesar.setOnClickListener{
+        BtnProcesar.setOnClickListener{
             procesar()
         }
 
@@ -70,7 +76,7 @@ companion object {
                 reconectar.text = "Capturar TAGS"
             }else{
 
-                configurar()
+                configurar() //comienza la lectura RFID
                 reconectar.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_baseline_stop_circle_24,0,0,0)
                 reconectar.text = "Detener"
 
@@ -78,8 +84,60 @@ companion object {
         }
 
         stop.setOnClickListener {
+            //se inhabilita para unificar el stop en un solo boton
             stopInventory()
         }
+
+        BtnGuardar.setOnClickListener {
+            guardarTags()
+        }
+
+
+    }
+
+    private fun guardarTags() {
+        val objDbH = dbHelper(this)
+        var objUsr = usuario()
+        var objProd = producto()
+        var objInv = inventarios()
+        var sucess = (-1).toLong()
+        objInv = objDbH.selectIdInventario()
+        try{
+
+            for(listT in listaTags){
+
+                objUsr.nombre = usr
+
+                objProd.codigoEPC = listT.idTag
+                objProd.cantidad = 1
+                objProd.idSabueso = "RFID"
+
+
+                objInv.producto = objProd
+                objInv.usuario = objUsr
+
+                sucess = objDbH.insertConteo(objInv)
+
+            }
+            if(sucess != (-1).toLong()){
+                Toast.makeText(this,"Guardado!",Toast.LENGTH_LONG).show()
+            }else{
+
+                Toast.makeText(this,"No se pudo almacenar, intente nuevamente. "+sucess,Toast.LENGTH_LONG).show()
+            }
+
+
+
+        }catch (e:Exception){
+            Toast.makeText(this,"Error guardarTags "+e.message,Toast.LENGTH_LONG).show()
+
+        }
+
+
+
+
+
+
     }
 
     private fun configurar() {
@@ -116,7 +174,7 @@ companion object {
             //Configuración de antena RFID
             try {
                 rfModeTable = reader?.ReaderCapabilities?.RFModes?.getRFModeTableInfo(0)
-            } catch (ex: java.lang.Exception) {
+            } catch (ex: Exception) {
             }
 
             // Este codigo no afecta al ser quitado
@@ -127,6 +185,7 @@ companion object {
                 antennaRfConfig = reader?.Config?.Antennas?.getAntennaRfConfig(1)
                 antennaRfConfig?.setrfModeTableIndex(0)
                 antennaRfConfig?.tari = 0
+
                 antennaRfConfig?.transmitPowerIndex = 270
                 reader?.Config?.Antennas?.setAntennaRfConfig(1, antennaRfConfig)
 
@@ -197,8 +256,10 @@ companion object {
                 reader?.Events?.setInventoryStopEvent(true)
                 // enables tag read notification. if this is set to false, no tag read notification is send
                 reader?.Events?.setTagReadEvent(true)
+
                 reader?.Events?.setReaderDisconnectEvent(true)
                 reader?.Events?.setBatteryEvent(true)
+
             } catch (e: InvalidUsageException) {
                 e.printStackTrace()
                 //return 6;
@@ -248,7 +309,7 @@ companion object {
             // Sin estas lineas de codigo no es posible tomar el inventario
             try {
                 reader?.Config?.setUniqueTagReport(true)
-                //reader?.Config?.beeperVolume = BEEPER_VOLUME.MEDIUM_BEEP
+
                 reader?.Actions?.Inventory?.perform()
 
 
@@ -373,7 +434,7 @@ companion object {
 
         override fun eventStatusNotify(e: RfidStatusEvents?) {
               if (e != null) {
-                           println("Status Notificationnn: " + e.StatusEventData.getStatusEventType())
+                           println("estado: " + e.StatusEventData.getStatusEventType())
              }
 
         }
@@ -448,7 +509,10 @@ companion object {
     fun stopInventory() {
         try {
             if(reader?.isConnected == true){
+
                 reader?.disconnect()
+
+                BtnProcesar.isEnabled = true
             }
 
         } catch (e: InvalidUsageException) {
@@ -476,7 +540,9 @@ companion object {
 
     fun procesar(){
         //val adapter2 = TagsAdapter(this, listaTags)
-//
+
+    if(listaTags.isNotEmpty()){
+    BtnGuardar.isEnabled = true
 
         adapter = TagsAdapter(this, listaTags)
 
@@ -492,6 +558,11 @@ companion object {
 
             true
         }
+    }else{
+
+        Toast.makeText(this,"No se encontraron TAGS",Toast.LENGTH_LONG).show()
+    }
+
     }
 
 

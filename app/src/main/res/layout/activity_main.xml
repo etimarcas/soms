@@ -46,12 +46,22 @@
             />
 
         <Button
-        android:id="@+id/procesar"
+        android:id="@+id/BtnProcesar"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:text="Listar Tags"
         android:drawableLeft="@drawable/ic_baseline_assignment_24"
+        android:enabled="false"
         />
+
+        <Button
+            android:id="@+id/BtnGuardar"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:text="Guardar"
+            android:drawableLeft="@drawable/ic_baseline_save_24"
+            android:enabled="false"
+            />
 
     </LinearLayout>
 

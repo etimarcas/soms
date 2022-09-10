@@ -40,7 +40,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:textSize="15dp"
-        android:hint="B00000000000000000000001"
+        android:hint=""
         />
 
 </LinearLayout>

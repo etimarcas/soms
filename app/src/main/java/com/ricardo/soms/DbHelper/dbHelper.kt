@@ -6,6 +6,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import androidx.core.database.getIntOrNull
 import com.ricardo.soms.objetos.bodega
 import com.ricardo.soms.objetos.inventarios
 import com.ricardo.soms.objetos.producto
@@ -59,6 +60,7 @@ class dbHelper (context: Context): SQLiteOpenHelper(context,DATABASE_NAME,null,D
                     "idInventario TEXT DEFAULT ''," +
                     "idproducto TEXT DEFAULT ''," +
                     "codBarras TEXT DEFAULT ''," +
+                    "codEPC TEXT DEFAULT ''," +
                     "cantidad INTEGER" +
                     ")")
 
@@ -144,7 +146,7 @@ class dbHelper (context: Context): SQLiteOpenHelper(context,DATABASE_NAME,null,D
     @SuppressLint("Range")
     fun selectProducto(prod: producto):producto {
 
-        var producto = producto()
+        //var producto = producto()
         val selectQuery1 = "SELECT * FROM productos WHERE codigoBarras13 = ? group by codigoBarras13"
         val selectQuery2 = "SELECT * FROM productos WHERE codigoBarras14 = ?"
         val db = this.writableDatabase
@@ -155,9 +157,9 @@ class dbHelper (context: Context): SQLiteOpenHelper(context,DATABASE_NAME,null,D
 
             if(cursor?.moveToFirst() == true){
                 do{
-                    producto.idSabueso =  cursor?.getString(cursor?.getColumnIndex("idSabueso"))
-                    producto.descripcion = cursor?.getString(cursor?.getColumnIndex("descripcion"))
-                    producto.codigoBarras13 = cursor?.getString(cursor?.getColumnIndex("codigoBarras13"))
+                    prod.idSabueso =  cursor?.getString(cursor?.getColumnIndex("idSabueso"))
+                    prod.descripcion = cursor?.getString(cursor?.getColumnIndex("descripcion"))
+                    prod.codigoBarras13 = cursor?.getString(cursor?.getColumnIndex("codigoBarras13"))
 
 
                 }while (cursor?.moveToNext())
@@ -169,9 +171,9 @@ class dbHelper (context: Context): SQLiteOpenHelper(context,DATABASE_NAME,null,D
 
             if(cursor?.moveToFirst() == true){
                 do{
-                    producto.idSabueso =  cursor?.getString(cursor?.getColumnIndex("idSabueso"))
-                    producto.codigoBarras14 = cursor?.getString(cursor?.getColumnIndex("codigoBarras14"))
-                    producto.descripcion = cursor?.getString(cursor?.getColumnIndex("descripcion"))
+                    prod.idSabueso =  cursor?.getString(cursor?.getColumnIndex("idSabueso"))
+                    prod.codigoBarras14 = cursor?.getString(cursor?.getColumnIndex("codigoBarras14"))
+                    prod.descripcion = cursor?.getString(cursor?.getColumnIndex("descripcion"))
                 }while (cursor?.moveToNext())
             }
 
@@ -182,7 +184,7 @@ class dbHelper (context: Context): SQLiteOpenHelper(context,DATABASE_NAME,null,D
         cursor?.close()
         db.close()
 
-        return producto
+        return prod
     }
 
     fun selectUsuario(objUsr: usuario): Boolean {
@@ -202,7 +204,7 @@ class dbHelper (context: Context): SQLiteOpenHelper(context,DATABASE_NAME,null,D
         return acceso
     }
 
-    fun insertInventario(objInv: inventarios):Long {
+    fun insertConteo(objInv: inventarios):Long {
 
         val db = this.writableDatabase
         val values = ContentValues()
@@ -213,7 +215,7 @@ class dbHelper (context: Context): SQLiteOpenHelper(context,DATABASE_NAME,null,D
         }else {
             values.put("codBarras", objInv.producto?.codigoBarras14)
         }
-
+        values.put("codEPC",objInv.producto?.codigoEPC)
 
         values.put("idUser",objInv.usuario?.nombre)
         values.put("idInventario",objInv.idInventario)
@@ -228,7 +230,7 @@ class dbHelper (context: Context): SQLiteOpenHelper(context,DATABASE_NAME,null,D
     }
 
     @SuppressLint("Range")
-    fun selectInventario(): inventarios {
+    fun selectIdInventario(): inventarios {
         var objInv = inventarios()
         val selectQuery = "SELECT * FROM inventario limit 1"
         val db = this.writableDatabase
@@ -243,6 +245,61 @@ class dbHelper (context: Context): SQLiteOpenHelper(context,DATABASE_NAME,null,D
         cursor.close()
         db.close()
         return objInv
+    }
+
+    fun deleteLastItem():Int {
+
+        //val query = "DELETE FROM conteo WHERE id = (SELECT MAX(id) FROM conteo)"
+        val db = this.writableDatabase
+
+        var sucess = db.delete("conteo","id = (SELECT MAX(id) FROM conteo)",null)
+
+        db.close()
+        return sucess
+
+    }
+
+    @SuppressLint("Range")
+    fun selectConteo(): ArrayList<inventarios> {
+        val listInv = ArrayList<inventarios>()
+        val selectQuery = "SELECT * FROM conteo INNER JOIN bodegas order by idSabueso"
+        val db = this.writableDatabase
+
+        val cursor = db.rawQuery(selectQuery, null)
+        if (cursor.moveToFirst()) {
+            do{
+                val objInv = inventarios()
+                val objUsr = usuario()
+                val objPro = producto()
+                val objBod = bodega()
+                objUsr.nombre = cursor.getString(cursor.getColumnIndex("idUser"))
+
+                objPro.codigoBarras13 = cursor.getString(cursor.getColumnIndex("codBarras"))
+
+                objPro.codigoEPC= cursor.getString(cursor.getColumnIndex("codEPC"))
+
+                objPro.cantidad = cursor.getIntOrNull(cursor.getColumnIndex("cantidad"))
+
+                objInv.idInventario = cursor.getString(cursor.getColumnIndex("idInventario"))
+
+                objPro.idSabueso = cursor.getString(cursor.getColumnIndex("idproducto"))
+
+                objBod.idSabueso = cursor.getString(cursor.getColumnIndex("idSabueso"))
+
+                objInv.usuario = objUsr
+                objInv.producto = objPro
+                objInv.bodega = objBod
+
+                listInv.add(objInv)
+            }while (cursor.moveToNext())
+
+
+
+        }
+
+        cursor.close()
+        db.close()
+        return listInv
     }
 
 

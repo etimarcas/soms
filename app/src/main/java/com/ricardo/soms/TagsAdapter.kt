@@ -21,7 +21,7 @@ ArrayAdapter<tags>(mContext,0,lista){ //cmbiar tags por String
         //layout.lbl_tag.setText(""+lista[position])
 
         layout.lbl_idtag.setText(tag.idTag.toString())
-        layout.lbl_tag.setText(tag.distanceTag.toString())
+        //layout.lbl_tag.setText(tag.distanceTag.toString())
 
         return layout
     }

@@ -23,7 +23,8 @@ import com.ricardo.soms.objetos.usuario
 import kotlinx.android.synthetic.main.activity_menu_principal.*
 import java.io.File
 import java.io.IOException
-import java.lang.Exception
+
+import kotlin.Exception
 
 
 class menuPrincipal : AppCompatActivity() {
@@ -68,6 +69,9 @@ class menuPrincipal : AppCompatActivity() {
         }
 
         BtnExportar.setOnClickListener { //generar archivos de salida
+
+            exportarInv()
+
          }
 
         BtnSoporte.setOnClickListener {
@@ -76,11 +80,7 @@ class menuPrincipal : AppCompatActivity() {
 
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
+    override fun onRequestPermissionsResult(requestCode: Int,permissions: Array<out String>,grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         when(requestCode){
@@ -151,6 +151,73 @@ class menuPrincipal : AppCompatActivity() {
 
     }
 
+    private fun exportarInv(){
+        val objdbhelper = dbHelper(this)
+        var listInv: ArrayList<inventarios> = ArrayList()
+
+        val ruta = "/sdcard/soms/Salidas/"
+
+        val fileInventario = "Inventario.txt"
+        val fileInventarioRFID = "InventarioRFID.txt"
+        val fileNovedadesInventario = "NovedadesInventario.txt"
+
+        try{
+
+            listInv = objdbhelper.selectConteo()
+
+
+
+            for(lInv in listInv){
+                if(lInv.producto?.idSabueso == "NC"){ //no catalogado
+
+                    val file = File(ruta,fileNovedadesInventario)
+
+                    var linea = lInv.bodega?.idSabueso.toString() + "," + lInv.usuario?.nombre + "," + lInv.producto?.codigoBarras13 + "," + lInv.producto?.cantidad + "," + lInv.idInventario + ",0\n"
+
+                    file.appendText(linea)
+
+                }else{
+
+
+                    if(lInv.producto?.idSabueso == "RFID"){
+
+                        val file = File(ruta,fileInventarioRFID)
+
+                        var linea = lInv.bodega?.idSabueso.toString() + "," + lInv.usuario?.nombre + "," + lInv.producto?.codigoEPC + "," + lInv.producto?.cantidad + "," + lInv.idInventario + ",0\n"
+
+                        file.appendText(linea)
+
+                    }else{
+
+                        val file = File(ruta,fileInventario)
+
+                        var linea = lInv.bodega?.idSabueso.toString() + "," + lInv.usuario?.nombre + "," + lInv.producto?.codigoBarras13 + "," + lInv.producto?.cantidad + "," + lInv.idInventario + "," + lInv.producto?.idSabueso + "\n"
+
+                        file.appendText(linea)
+
+                    }
+
+
+
+                }
+
+
+
+            }
+
+
+
+            Toast.makeText(this,"Archivos generados",Toast.LENGTH_LONG).show()
+
+        }catch (e:Exception){
+            Toast.makeText(this,"Error esrcibiendo informacion "+e.message,Toast.LENGTH_LONG).show()
+        }
+
+
+
+
+    }
+
     private fun syncFiles(){
 
         val objdbhelper = dbHelper(this)
@@ -210,13 +277,15 @@ class menuPrincipal : AppCompatActivity() {
 
                 }
 
+
+
             }else{
                 TbMensaje.setText("No se encuentran uno o mas archivos en la ruta /SOMS/ENTRADA del dispositivo.")
                 TbMensaje.visibility = View.VISIBLE
 
             }
 
-
+            buscarInventario()
 
 
         }catch (e:Exception){
@@ -229,10 +298,13 @@ class menuPrincipal : AppCompatActivity() {
     private fun buscarInventario(){
 //si existe un inventario cargado se habilita el boton de inventario y se muestra un mensaje indicando
         val objDbH = dbHelper(this)
-        var objInv = objDbH.selectInventario()
+        var objInv = objDbH.selectIdInventario()
         if(!objInv.idInventario.isNullOrEmpty()){
-        TbMensaje.visibility = View.VISIBLE
-        TbMensaje.setText("El inventario con Id. ${objInv.idInventario} se encuentra cargado!")
+
+            TbMensaje.visibility = View.VISIBLE
+            TbMensaje.setText("El inventario con Id. ${objInv.idInventario} se encuentra cargado!")
+
+            LyExportar.visibility = View.VISIBLE
         }
 
     }
@@ -248,7 +320,7 @@ class menuPrincipal : AppCompatActivity() {
             super.onPreExecute()
 
             progressBar.visibility = View.VISIBLE
-            TbMensaje.visibility = View.VISIBLE
+            //TbMensaje.visibility = View.VISIBLE
 
         }
 
