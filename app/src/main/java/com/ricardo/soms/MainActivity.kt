@@ -3,6 +3,7 @@ package com.ricardo.soms
 import android.content.Context
 import android.os.AsyncTask
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
@@ -56,20 +57,13 @@ companion object {
 
 
 
-
-        //adapter = TagsAdapter(this, lsTags)
-
-        //adapter = TagsAdapter(this, listaTags)
-
-
-        //configurar()
-
-
         BtnProcesar.setOnClickListener{
             procesar()
         }
 
         reconectar.setOnClickListener{
+
+
             if(reader?.isConnected == true){
                 stopInventory()
                 reconectar.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_baseline_play_circle_24,0,0,0)
@@ -83,10 +77,6 @@ companion object {
             }
         }
 
-        stop.setOnClickListener {
-            //se inhabilita para unificar el stop en un solo boton
-            stopInventory()
-        }
 
         BtnGuardar.setOnClickListener {
             guardarTags()
@@ -391,7 +381,6 @@ companion object {
 
 
                      tg.idTag = myTags[index].tagID
-                    ///
 
 
 
@@ -473,15 +462,31 @@ companion object {
 
     override fun onPause() {
         super.onPause()
-        try {
+        desconectar()
+       /* try {
             reader?.disconnect()
         } catch (e: InvalidUsageException) {
             e.printStackTrace()
         } catch (e: OperationFailureException) {
             e.printStackTrace()
         } catch (e: java.lang.Exception) {
-        }
+        }*/
     }
+
+    @Synchronized
+    private fun desconectar() {
+        try{
+            if (readers != null) {
+                reader?.Events?.removeEventsListener(eventHandler)
+                reader?.disconnect()
+            }
+
+
+        }catch (e:Exception){
+            Log.i(null,e.message.toString())}
+
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -500,19 +505,24 @@ companion object {
         }
     }
 
-    override fun onRestart() {
+   /* override fun onRestart() {
         super.onRestart()
-        configurar()
-    }
+        //configurar()
+    }*/
 
     @Synchronized
     fun stopInventory() {
         try {
-            if(reader?.isConnected == true){
+            if(reader?.isConnected == true && reader != null){
+
+                //reader?.Actions?.Inventory?.stop()
 
                 reader?.disconnect()
 
                 BtnProcesar.isEnabled = true
+
+            }else{
+                println("reader no conectado")
             }
 
         } catch (e: InvalidUsageException) {

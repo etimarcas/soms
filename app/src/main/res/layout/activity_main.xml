@@ -19,8 +19,9 @@
         android:id="@+id/lbl_Estado"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:text="Estado del RFID"
+        android:text="estado"
         android:textSize="15dp"
+        android:visibility="gone"
         />
 
     <LinearLayout
@@ -37,13 +38,7 @@
             android:drawableLeft="@drawable/ic_baseline_play_circle_24"
             />
 
-        <Button
-            android:id="@+id/stop"
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:text="Detener  Lectura"
-            android:visibility="gone"
-            />
+
 
         <Button
         android:id="@+id/BtnProcesar"

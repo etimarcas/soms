@@ -183,7 +183,7 @@ class menuPrincipal : AppCompatActivity() {
 
                         val file = File(ruta,fileInventarioRFID)
 
-                        var linea = lInv.bodega?.idSabueso.toString() + "," + lInv.usuario?.nombre + "," + lInv.producto?.codigoEPC + "," + lInv.producto?.cantidad + "," + lInv.idInventario + ",0\n"
+                        var linea = lInv.bodega?.idSabueso.toString() + "," + lInv.usuario?.nombre + "," + lInv.producto?.codigoEPC + ",1," + lInv.idInventario + ",0\r\n"
 
                         file.appendText(linea)
 
@@ -191,7 +191,7 @@ class menuPrincipal : AppCompatActivity() {
 
                         val file = File(ruta,fileInventario)
 
-                        var linea = lInv.bodega?.idSabueso.toString() + "," + lInv.usuario?.nombre + "," + lInv.producto?.codigoBarras13 + "," + lInv.producto?.cantidad + "," + lInv.idInventario + "," + lInv.producto?.idSabueso + "\n"
+                        var linea = lInv.bodega?.idSabueso.toString() + "," + lInv.usuario?.nombre + "," + lInv.producto?.codigoBarras13 + "," + lInv.producto?.cantidad + "," + lInv.idInventario + "," + lInv.producto?.idSabueso + "\r\n"
 
                         file.appendText(linea)
 
