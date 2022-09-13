@@ -7,10 +7,7 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import androidx.core.database.getIntOrNull
-import com.ricardo.soms.objetos.bodega
-import com.ricardo.soms.objetos.inventarios
-import com.ricardo.soms.objetos.producto
-import com.ricardo.soms.objetos.usuario
+import com.ricardo.soms.objetos.*
 
 class dbHelper (context: Context): SQLiteOpenHelper(context,DATABASE_NAME,null,DATABASE_VER) {
 
@@ -20,6 +17,12 @@ class dbHelper (context: Context): SQLiteOpenHelper(context,DATABASE_NAME,null,D
     }
 
     override fun onCreate(db: SQLiteDatabase?) {
+        val CREATE_TABLE_CONFIG: String =
+            ("CREATE TABLE configuracion (parametro TEXT PRIMARY KEY,valor TEXT)")
+
+        db!!.execSQL(CREATE_TABLE_CONFIG);
+
+
         val CREATE_TABLE_USUARIOS:String=
             ("CREATE TABLE usuarios (" +
                     "idUser integer primary key autoincrement," +
@@ -74,6 +77,43 @@ class dbHelper (context: Context): SQLiteOpenHelper(context,DATABASE_NAME,null,D
         db!!.execSQL("DROP TABLE IF EXISTS inventario")
         db!!.execSQL("DROP TABLE IF EXISTS conteo")
         onCreate(db!!)
+    }
+
+    fun updateParametro(param: Parametros): Long {
+        val db = this.writableDatabase
+        val values = ContentValues()
+        values.put("parametro", param.parametro)
+        values.put("valor", param.valor)
+        var sucess =  db.replace("CONFIGURACION", null, values)
+
+        db.close()
+        return sucess
+    }
+
+    @SuppressLint("Range")
+    fun selectParametro(objParam: Parametros):String {
+        var dato:String=""
+        val selectQuery = "SELECT * FROM configuracion WHERE parametro = ?"
+        val db = this.writableDatabase
+
+        val cursor = db.rawQuery(selectQuery, arrayOf(objParam.parametro.toString()))
+        if (cursor.moveToFirst()) {
+
+            do {
+                // val parametro = Parametros()
+                // parametro.parametro = cursor.getString(cursor.getColumnIndex("parametro"))
+                dato = cursor.getString(cursor.getColumnIndex("valor"))
+
+
+            } while (cursor.moveToNext())
+
+        }
+        cursor.close()
+        db.close()
+        return dato
+
+
+
     }
 
     fun insertUsuarioF(usr:usuario):Long{

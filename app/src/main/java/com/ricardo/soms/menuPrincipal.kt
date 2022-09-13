@@ -163,9 +163,19 @@ class menuPrincipal : AppCompatActivity() {
 
         try{
 
+
+
+            if(File(ruta,fileInventario).exists()){
+                File(ruta,fileInventario).delete()
+            }
+            if(File(ruta,fileInventarioRFID).exists()){
+                File(ruta,fileInventarioRFID).delete()
+            }
+            if(File(ruta,fileNovedadesInventario).exists()){
+                File(ruta,fileNovedadesInventario).delete()
+            }
+
             listInv = objdbhelper.selectConteo()
-
-
 
             for(lInv in listInv){
                 if(lInv.producto?.idSabueso == "NC"){ //no catalogado

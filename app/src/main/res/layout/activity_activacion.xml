@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activacion"
+    android:orientation="vertical"
+    android:padding="20dp">
+
+    <TextView
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="ID Dispositivo" />
+
+    <EditText
+        android:id="@+id/idTxtActivacionId"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="ID Dispositivo"
+        android:inputType="text"
+        android:enabled="false"/>
+
+    <TextView
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="MAC Dispositivo" />
+
+    <EditText
+        android:id="@+id/idTxtActivacionMac"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="MAC Dispositivo"
+        android:inputType="text"
+        android:enabled="false"/>
+
+    <TextView
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Nombre de Aplicacion" />
+
+    <EditText
+        android:id="@+id/idTxtActivacionNomAplicacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nombre de Aplicacion"
+        android:text="Sabueso_OMS"
+        android:inputType="text"
+        android:enabled="false"/>
+
+    <TextView
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Clave Activación" />
+
+    <EditText
+        android:id="@+id/idTxtActivacionClave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Clave Activación"
+        android:inputType="text" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingRight="10dp"
+        android:paddingLeft="10dp"
+        >
+
+        <Button
+            android:id="@+id/BtnActivar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Activar" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Copiar"
+            android:id="@+id/BtnCopiar"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Salir"
+            android:id="@+id/BtanSalir"
+            />
+
+
+
+    </LinearLayout>
+
+
+</LinearLayout>
