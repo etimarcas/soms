@@ -17,6 +17,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+
+
+
 companion object {
     private lateinit var availableRFIDReaderList: ArrayList<ReaderDevice>
     private lateinit var readerDevice: ReaderDevice
@@ -39,6 +42,9 @@ companion object {
     var adapter: TagsAdapter? = null
 
     var usr = ""
+
+    var distancia = 1
+
 }
 
 
@@ -133,6 +139,7 @@ companion object {
     private fun configurar() {
         listaTags.clear()
         configurarRFIDHilo().execute()
+        //rastrearRFID().execute("30395DFA810B73C16FD0CC60")
     }
 
 
@@ -298,10 +305,14 @@ companion object {
             // Sin estas lineas de codigo no es posible tomar el inventario
             // Sin estas lineas de codigo no es posible tomar el inventario
             try {
+
                 reader?.Config?.setUniqueTagReport(true)
 
                 reader?.Actions?.Inventory?.perform()
 
+
+
+               // reader?.Actions?.TagLocationing?.Perform("30395DFA810B73C16FD0CC60",null,null)
 
 
 
@@ -355,6 +366,243 @@ companion object {
 
         override fun onPreExecute() {
             progressBar.visibility = View.VISIBLE
+
+        }
+
+
+    }
+
+    inner class rastrearRFID:AsyncTask<String,Void,String>(){
+        override fun doInBackground(vararg p0: String?): String {
+            // Toma el listado de reders disponibles
+            availableRFIDReaderList =  readers!!.GetAvailableRFIDReaderList()
+
+            if(availableRFIDReaderList.size != 0){
+                if(availableRFIDReaderList.size == 1){
+                    readerDevice = availableRFIDReaderList.get(0)
+                    reader = availableRFIDReaderList.get(0).rfidReader
+
+                }else{
+                    var algo="es una lista de readers"
+                }
+
+            }
+            // Establece la conexion con el reader
+            //if(reader?.isConnected == true)
+            reader?.connect()
+
+
+            //Configuración de antena RFID
+
+            //Configuración de antena RFID
+
+
+            //Configuración de antena RFID
+            try {
+                rfModeTable = reader?.ReaderCapabilities?.RFModes?.getRFModeTableInfo(0)
+            } catch (ex: Exception) {
+            }
+
+            // Este codigo no afecta al ser quitado
+
+            // Este codigo no afecta al ser quitado
+            var antennaRfConfig: AntennaRfConfig? = null
+            try {
+                antennaRfConfig = reader?.Config?.Antennas?.getAntennaRfConfig(1)
+                antennaRfConfig?.setrfModeTableIndex(0)
+                antennaRfConfig?.tari = 0
+
+                antennaRfConfig?.transmitPowerIndex = 270
+                reader?.Config?.Antennas?.setAntennaRfConfig(1, antennaRfConfig)
+
+            } catch (e: InvalidUsageException) {
+                e.printStackTrace()
+            } catch (e: OperationFailureException) {
+                e.printStackTrace()
+            } catch (ex: java.lang.Exception) {
+            }
+
+            // Este codigo no afecta al ser quitado
+            // Get Singulation Control for the antenna 1 Antennas.
+
+            // Este codigo no afecta al ser quitado
+            // Get Singulation Control for the antenna 1 Antennas.
+            val singulationControl: SingulationControl
+            try {
+                singulationControl = reader?.Config?.Antennas?.getSingulationControl(1)!!
+
+                // Set Singulation Control for the antenna 1
+                //Antennas.SingulationControl singulationControl;
+                singulationControl.session = SESSION.SESSION_S0
+                singulationControl.tagPopulation = 30.toShort()
+                singulationControl.Action.slFlag = SL_FLAG.SL_ALL
+                singulationControl.Action.inventoryState = INVENTORY_STATE.INVENTORY_STATE_A
+                reader?.Config?.Antennas?.setSingulationControl(1, singulationControl)
+            } catch (e: InvalidUsageException) {
+                e.printStackTrace()
+            } catch (e: OperationFailureException) {
+                e.printStackTrace()
+            } catch (ex: java.lang.Exception) {
+            }
+
+            // Este codigo no afecta al ser quitado
+            // Get and Set regulatory configuration settings
+
+            // Este codigo no afecta al ser quitado
+            // Get and Set regulatory configuration settings
+            var regulatoryConfig: RegulatoryConfig? = null
+            try {
+                regulatoryConfig = reader?.Config?.getRegulatoryConfig()
+                val regionInfo: RegionInfo? = reader?.ReaderCapabilities?.SupportedRegions?.getRegionInfo(1)
+                regulatoryConfig?.region = regionInfo?.regionCode
+
+                //aqui cambio bastante el codigo
+                regionInfo?.isHoppingConfigurable?.let { regulatoryConfig?.setIsHoppingOn(it) }
+                regulatoryConfig?.setEnabledChannels(regionInfo?.supportedChannels)
+                reader?.Config?.setRegulatoryConfig(regulatoryConfig)
+                reader?.Config?.saveConfig()
+            } catch (e: InvalidUsageException) {
+                e.printStackTrace()
+            } catch (e: OperationFailureException) {
+                e.printStackTrace()
+            } catch (ex: java.lang.Exception) {
+            }
+
+            ///////////////////////////////////*************************************
+            // Se agrega los siguientes los cuales son los que permiten realizar la captura
+            ///////////////////////////////////*************************************
+            // Se agrega los siguientes los cuales son los que permiten realizar la captura
+            val eventHandler = EventHandlerBoton()
+            // sin este codigo se captura los tag rfid, pero no se pueden mostrar en pantalla
+
+            try {
+                reader?.Events?.addEventsListener(eventHandler)
+                // Subscribe required status notification
+
+                /*
+                reader?.Events?.setInventoryStartEvent(true)
+                reader?.Events?.setInventoryStopEvent(true)
+                */
+
+                // enables tag read notification. if this is set to false, no tag read notification is send
+                reader?.Events?.setTagReadEvent(true)
+
+                reader?.Events?.setReaderDisconnectEvent(true)
+                reader?.Events?.setBatteryEvent(true)
+
+            } catch (e: InvalidUsageException) {
+                e.printStackTrace()
+                //return 6;
+            } catch (e: OperationFailureException) {
+                e.printStackTrace()
+                //return 7;
+            }
+            //Sin este codigo no toma lectura rfid
+            //Sin este codigo no toma lectura rfid
+            try {
+                if (reader != null) reader?.Config?.getDeviceStatus(true, false, false)
+            } catch (e: InvalidUsageException) {
+                e.printStackTrace()
+                //return 8
+            } catch (e: OperationFailureException) {
+                e.printStackTrace()
+                //return 9
+            } catch (ex: java.lang.Exception) {
+                //return 10
+            }
+            //Sin este codigo no toma lectura rfid
+            //Sin este codigo no toma lectura rfid
+            try {
+                // Get tag storage settings from the reader
+                val tagStorageSettings: TagStorageSettings? =
+                    reader?.Config?.getTagStorageSettings()
+                // set tag storage settings on the reader with all fields
+                tagStorageSettings?.setTagFields(TAG_FIELD.ALL_TAG_FIELDS)
+                reader?.Config?.setTagStorageSettings(tagStorageSettings)
+                val tagField = arrayOfNulls<TAG_FIELD>(4)
+                tagField[0] = TAG_FIELD.PC
+                tagField[1] = TAG_FIELD.PEAK_RSSI
+                tagField[2] = TAG_FIELD.TAG_SEEN_COUNT
+                tagField[3] = TAG_FIELD.CRC
+                tagStorageSettings?.tagFields = tagField
+                reader?.Config?.setTagStorageSettings(tagStorageSettings)
+            } catch (e: InvalidUsageException) {
+                e.printStackTrace()
+                //return 11
+            } catch (e: OperationFailureException) {
+                e.printStackTrace()
+                //return 12
+            } catch (ex: java.lang.Exception) {
+                //return 13
+            }
+            // Sin estas lineas de codigo no es posible tomar el inventario
+            // Sin estas lineas de codigo no es posible tomar el inventario
+            try {
+
+                //reader?.Config?.setUniqueTagReport(true)
+
+                //reader?.Actions?.Inventory?.perform()
+
+                var a=p0[0].toString()
+
+                reader?.Actions?.TagLocationing?.Perform(a,null,null)
+
+                publishProgress(null)
+
+
+
+            } catch (e: InvalidUsageException) {
+                e.printStackTrace()
+                //return 14
+            } catch (e: OperationFailureException) {
+                e.printStackTrace()
+                //return 15
+            } catch (ex: java.lang.Exception) {
+                //return 16
+            }
+
+            // No se encuentra utilidad en este codigo igual se deja.
+            // Read user memory bank for the given tag ID
+
+            // No se encuentra utilidad en este codigo igual se deja.
+            // Read user memory bank for the given tag ID
+            val tagAccess = TagAccess()
+            val readAccessParams = tagAccess.ReadAccessParams()
+            val readAccessTag: TagData
+            readAccessParams.accessPassword = 0
+            readAccessParams.count = 4 // read 4 words
+
+            readAccessParams.memoryBank = MEMORY_BANK.MEMORY_BANK_USER
+            readAccessParams.offset = 0 // start reading from word offset 0
+
+            try {
+                readAccessTag = reader?.Actions?.TagAccess?.readWait("", readAccessParams, null)!!
+                println(
+                    readAccessTag.memoryBank.toString() + " : " +
+                            readAccessTag.memoryBankData
+                )
+
+                ////////OK
+            } catch (e: InvalidUsageException) {
+                e.printStackTrace()
+            } catch (e: OperationFailureException) {
+                e.printStackTrace()
+            } catch (ex: java.lang.Exception) {
+            }
+
+            return ""
+        }
+
+        override fun onPostExecute(result: String?) {
+            progressBar2.setProgress(distancia)
+
+        }
+
+        override fun onPreExecute(){
+        }
+
+        override fun onProgressUpdate(vararg values: Void?) {
+            progressBar2.setProgress(distancia)
         }
 
 
@@ -403,9 +651,14 @@ companion object {
                        var tag = index
                         val dist = myTags[tag].LocationInfo.relativeDistance
 
-                        tg.distanceTag = myTags[tag].LocationInfo.relativeDistance.toString()
+                        //tg.distanceTag = myTags[tag].LocationInfo.relativeDistance.toString()
 
-                        println("Tag relative distance $dist")
+                        //println("Tag relative distance $dist")
+
+                       distancia = dist.toInt()
+
+                       println("Tag relative distance $distancia")
+
                     }
 
 
@@ -417,6 +670,8 @@ companion object {
 
                 }
             }
+
+
         }
 
 
@@ -428,36 +683,12 @@ companion object {
 
         }
 
-        fun localizar(idTag:String):Boolean{
-        var s = false
-            if(reader?.isConnected == true) {
-
-                reader?.Actions?.TagLocationing?.Perform(asciiToHex(idTag), null,null)
-                s = true
-            }
-            return s
-        }
-
-        fun asciiToHex(data:String):String{
-            var p0 = data
-            if(p0 != null){
-                if (hextoascii.isDatainHex(p0)){
-                    return p0
-                }
-                p0 = p0.substring(1,p0.length-1)
-                val b: ByteArray = p0.toByteArray()
-                val builder = StringBuilder()
-                for (c in b) {
-                    builder.append(Integer.toHexString(c.toInt()))
-                }
-                return builder.toString()
-            }
-            return p0
-        }
 
 
 
     }
+
+
 
 
     override fun onPause() {

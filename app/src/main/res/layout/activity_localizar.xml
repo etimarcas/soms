@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".localizar"
+    android:orientation="vertical"
+    android:gravity="center">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_margin="10dp">
+
+        <TextView
+            android:id="@+id/textrfid"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text=""/>
+
+    </ScrollView>
+
+
+    <EditText
+        android:id="@+id/tbIdTag"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="text"
+        android:hint="idTag"
+        android:text="00000056"
+        />
+
+    <ProgressBar
+        android:id="@+id/pglocalizar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="50dp" />
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:gravity="center_horizontal">
+
+    <Button
+        android:id="@+id/btnRun"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:onClick="iniciar"
+        android:background="@drawable/ic_baseline_play_circle_24"
+        />
+
+    <Button
+        android:id="@+id/btnlocate"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:onClick="localizar"
+        android:background="@drawable/ic_baseline_my_location_24"
+        />
+
+</LinearLayout>
+
+
+
+</LinearLayout>
